@@ -64,6 +64,8 @@ public class Manager : MonoBehaviour
     public GameObject optionsPanel;
     public Image comboBarDisplay;
     public GameObject colorPanel;
+    public GameObject DashMobileButton;
+
     [Header("Sounds")]
 
     public AudioSource gameComboSoundSource;
@@ -133,6 +135,7 @@ public class Manager : MonoBehaviour
         //optionsBtn.SetActive(true);
         optionsPanel.SetActive(false);
         colorPanel.SetActive(false);
+        DashMobileButton.SetActive(false);
 
         backgroundEnviromentManager.SetPlayerRevealColor(overridePlayerColor ?? player.PlayerColor);
 #if UNITY_EDITOR
@@ -153,16 +156,21 @@ public class Manager : MonoBehaviour
         if (orientation == ScreenOrientation.Portrait || orientation == ScreenOrientation.PortraitUpsideDown || orientation == ScreenOrientation.LandscapeLeft || orientation == ScreenOrientation.LandscapeRight)
             Debug.Log("Orientation changed to " + orientation.ToString());
 
-        // if orientation potraits activate mobile controls
-        MobileControls = orientation == ScreenOrientation.Portrait || orientation == ScreenOrientation.PortraitUpsideDown;
+        MobileControls = orientation != ScreenOrientation.LandscapeLeft;
 
         if (MobileControls)
         {
-            Debug.LogError("Mobile Controls Activated");
-            throw new System.NotImplementedException();
+            Debug.LogWarning("Mobile Controls Activated");
+            DashMobileButton.SetActive(true);
+            player.EnableMobileControls();
         }
 
         backgroundEnviromentManager.CheckOrientation(orientation);
+    }
+
+    public void _ClickDashBtn()
+    {
+        player.ButtonDash();
     }
 
     void Update()

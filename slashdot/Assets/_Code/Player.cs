@@ -62,6 +62,9 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
     public float bendFactor = 1f;
 
+    private bool mobileControls;
+    private bool buttonDash;
+
     void Awake()
     {
         PlayerColor = new Color(0.62f, 0.85f, 0.99f, 1f);
@@ -106,6 +109,15 @@ public class Player : MonoBehaviour
         playerAnimator.Play("Spawn", 0);
     }
 
+    public void EnableMobileControls()
+    {
+        mobileControls = true;
+    }
+
+    public void ButtonDash()
+    {
+        buttonDash = true;
+    }
 
     private void Update()
     {
@@ -129,13 +141,14 @@ public class Player : MonoBehaviour
 
         // Repetitive dashing fine until spam it
         //Debug.Log(dashFatigue);
-        if (Input.GetMouseButtonDown(0) && !isDashing && !dashFatigued)
+        if (((!mobileControls && Input.GetMouseButtonDown(0)) || (mobileControls && buttonDash)) && !isDashing && !dashFatigued)
         {
             if (dashCoroutine != null)
             {
                 StopCoroutine(dashCoroutine);
             }
             dashCoroutine = StartCoroutine(DashCoroutine());
+            buttonDash = false;
         }
     }
     void FixedUpdate()
@@ -144,6 +157,7 @@ public class Player : MonoBehaviour
         if (freezePlayer)
             return;
 
+        // TODO: Should check only first touch on mobile controls
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = transform.position.z;
 
